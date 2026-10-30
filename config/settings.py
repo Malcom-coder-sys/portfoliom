@@ -160,7 +160,7 @@ STORAGES = {
 }
 if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
     STORAGES['default'] = {
-        'BACKEND': 'storages.backends.s3.S3Storage',
+        'BACKEND': 'portfolio.storage.MediaStorage',
         'OPTIONS': {
             'bucket_name': os.environ['AWS_STORAGE_BUCKET_NAME'],
             'access_key': os.environ.get('AWS_ACCESS_KEY_ID'),
