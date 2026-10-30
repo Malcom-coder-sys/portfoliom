@@ -1,0 +1,48 @@
+{% load portfolio_tags %}<section class="section contact" id="contact">
+  <div class="container">
+    {% include "portfolio/sections/_heading.html" %}
+    <div class="contact-grid{% if not site.enable_contact_form %} no-form{% endif %}">
+      <div class="contact-info" data-stagger>
+        {% if profile.email %}
+        <button class="card info-card copy" type="button" data-copy="{{ profile.email }}" data-reveal>
+          <span class="icon-tile"><i class="fa-solid fa-envelope"></i></span>
+          <span><small>{% ui "email_label" %}</small><strong>{{ profile.email }}</strong><em>{% ui "copy_hint" %} <i class="fa-regular fa-copy"></i></em></span>
+        </button>
+        {% endif %}
+        {% if profile.phone %}
+        <a class="card info-card" href="tel:{{ profile.phone|cut:" " }}" data-reveal>
+          <span class="icon-tile"><i class="fa-solid fa-phone"></i></span>
+          <span><small>{% ui "phone_label" %}</small><strong>{{ profile.phone }}</strong></span>
+        </a>
+        {% endif %}
+        {% if profile.location %}
+        <div class="card info-card" data-reveal>
+          <span class="icon-tile"><i class="fa-solid fa-location-dot"></i></span>
+          <span><small>{% ui "location_label" %}</small><strong>{% tr profile "location" %}</strong></span>
+        </div>
+        {% endif %}
+        {% if socials %}
+        <div class="contact-socials" data-reveal>
+          {% for link in socials %}<a class="icon-btn" href="{{ link.url }}" target="_blank" rel="noopener" aria-label="{{ link.label }}" data-tip="{{ link.label }}"><i class="{{ link.icon_class }}"></i></a>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if site.enable_contact_form %}
+      <form class="card contact-form" method="post" action="{% url 'contact' %}" data-reveal novalidate>
+        {% csrf_token %}
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="field-row">
+          <label class="field"><input type="text" name="name" required maxlength="120" placeholder=" " autocomplete="name"><span><i class="fa-regular fa-user"></i> {% ui "name" %}</span></label>
+          <label class="field"><input type="email" name="email" required placeholder=" " autocomplete="email"><span><i class="fa-regular fa-envelope"></i> {% ui "email" %}</span></label>
+        </div>
+        <label class="field"><input type="text" name="subject" maxlength="200" placeholder=" "><span><i class="fa-regular fa-bookmark"></i> {% ui "subject" %}</span></label>
+        <label class="field"><textarea name="message" rows="5" required placeholder=" "></textarea><span><i class="fa-regular fa-message"></i> {% ui "message" %}</span></label>
+        <button class="btn btn-primary btn-block magnetic" type="submit">
+          <span class="btn-label">{% ui "send" %}</span><i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</section>

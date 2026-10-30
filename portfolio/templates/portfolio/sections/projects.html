@@ -1,0 +1,40 @@
+{% load portfolio_tags %}<section class="section projects" id="projects">
+  <div class="container">
+    {% include "portfolio/sections/_heading.html" %}
+    <div class="projects-grid" data-stagger>
+      {% for project in projects %}
+      <article class="card project-card tilt{% if project.is_featured %} is-featured{% endif %}" data-reveal>
+        <div class="project-media">
+          {% if project.image %}
+            <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+          {% else %}
+            <div class="project-art"><i class="{{ project.icon_class }}"></i></div>
+          {% endif %}
+          {% if project.is_featured %}<span class="chip chip-accent project-flag"><i class="fa-solid fa-star"></i> {% ui "featured" %}</span>{% endif %}
+        </div>
+        <div class="project-body">
+          <span class="project-status">{% tr project "status_label" %}</span>
+          <h3>{% tr project "title" %}</h3>
+          <p>{% tr project "description" %}</p>
+          <ul class="tags">
+            {% for tech in project.tech_list %}<li>{{ tech }}</li>{% endfor %}
+          </ul>
+          <div class="project-links">
+            {% if project.link_url %}
+              <a class="link-arrow" href="{{ project.link_url }}" target="_blank" rel="noopener">{% ui "live" %} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            {% endif %}
+            {% if project.repo_url %}
+              <a class="link-arrow" href="{{ project.repo_url }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> {% ui "source" %}</a>
+            {% endif %}
+            {% if not project.link_url and not project.repo_url %}
+              <span class="link-muted"><i class="fa-regular fa-clock"></i> {% ui "coming_soon" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <p class="empty">{% ui "no_projects" %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>

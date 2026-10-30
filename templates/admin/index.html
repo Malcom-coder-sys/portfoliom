@@ -1,0 +1,116 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_ui log %}
+
+{% block bodyclass %}{{ block.super }} dashboard pf-dashboard{% endblock %}
+{% block nav-breadcrumbs %}<div class="pf-breadcrumbs"><div class="breadcrumbs">Tableau de bord</div></div>{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block content %}
+{% dashboard as d %}
+<div id="content-main" class="pf-dash">
+
+  <section class="pf-hero">
+    <div>
+      <p class="pf-eyebrow"><i class="fa-regular fa-sun"></i> {% now "l j F Y" %}</p>
+      <h1>Bonjour, {% firstof user.get_short_name user.get_username %} 👋</h1>
+      <p>Voici l'état de ton portfolio. Tout ce que tu modifies ici est en ligne immédiatement.</p>
+    </div>
+    <div class="pf-hero-actions">
+      {% if site_url %}<a class="pf-btn pf-btn-light" href="{{ site_url }}" target="_blank" rel="noopener"><i class="fa-regular fa-eye"></i> Voir le site</a>{% endif %}
+      <a class="pf-btn pf-btn-primary" href="{% url 'admin:portfolio_project_add' %}"><i class="fa-solid fa-plus"></i> Nouveau projet</a>
+    </div>
+  </section>
+
+  <section class="pf-kpis">
+    {% for k in d.kpis %}
+    <a class="pf-card pf-kpi tone-{{ k.tone }}" href="{{ k.url }}">
+      <span class="pf-kpi-icon"><i class="fa-solid {{ k.icon }}"></i></span>
+      <span class="pf-kpi-body">
+        <small>{{ k.label }}</small>
+        <strong>{{ k.value }}</strong>
+        <em>{{ k.hint }}</em>
+      </span>
+      <i class="fa-solid fa-arrow-right pf-kpi-go"></i>
+    </a>
+    {% endfor %}
+  </section>
+
+  <div class="pf-grid">
+    <div class="pf-col">
+      <section class="pf-card">
+        <header class="pf-card-head">
+          <h2><i class="fa-solid fa-list-check"></i> Complétude du portfolio</h2>
+          <span class="pf-pill">{{ d.completion }} %</span>
+        </header>
+        <div class="pf-progress"><span style="width: {{ d.completion }}%"></span></div>
+        <ul class="pf-checklist">
+          {% for label, ok, icon in d.checklist %}
+          <li class="{% if ok %}is-done{% endif %}">
+            <span class="pf-check">{% if ok %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid {{ icon }}"></i>{% endif %}</span>
+            {{ label }}
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <section class="pf-card">
+        <header class="pf-card-head"><h2><i class="fa-solid fa-bolt"></i> Accès rapides</h2></header>
+        <div class="pf-shortcuts">
+          {% for label, icon, url in d.shortcuts %}
+          <a class="pf-shortcut" href="{{ url }}"><i class="fa-solid {{ icon }}"></i><span>{{ label }}</span></a>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+
+    <div class="pf-col">
+      <section class="pf-card">
+        <header class="pf-card-head">
+          <h2><i class="fa-solid fa-inbox"></i> Derniers messages</h2>
+          <a class="pf-link" href="{% url 'admin:portfolio_contactmessage_changelist' %}">Tout voir</a>
+        </header>
+        {% if d.messages %}
+        <ul class="pf-messages">
+          {% for m in d.messages %}
+          <li>
+            <a href="{% url 'admin:portfolio_contactmessage_change' m.pk %}">
+              <span class="pf-avatar pf-avatar-soft">{{ m.name|slice:":1"|upper }}</span>
+              <span class="pf-msg-body">
+                <strong>{{ m.name }}{% if not m.is_read %} <em class="pf-dot" title="Non lu"></em>{% endif %}</strong>
+                <small>{{ m.subject|default:m.message|truncatechars:60 }}</small>
+              </span>
+              <time>{{ m.created_at|timesince }}</time>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="pf-empty"><i class="fa-regular fa-envelope-open"></i><p>Aucun message pour l'instant.<br><small>Ils arriveront ici depuis le formulaire de contact.</small></p></div>
+        {% endif %}
+      </section>
+
+      <section class="pf-card">
+        <header class="pf-card-head"><h2><i class="fa-solid fa-clock-rotate-left"></i> Activité récente</h2></header>
+        {% get_admin_log 6 as admin_log for_user user %}
+        {% if admin_log %}
+        <ul class="pf-timeline">
+          {% for entry in admin_log %}
+          <li class="{% if entry.is_addition %}is-add{% elif entry.is_deletion %}is-del{% else %}is-edit{% endif %}">
+            <span class="pf-tl-icon"><i class="fa-solid {% if entry.is_addition %}fa-plus{% elif entry.is_deletion %}fa-trash{% else %}fa-pen{% endif %}"></i></span>
+            <span>
+              {% if entry.is_deletion or not entry.get_admin_url %}<strong>{{ entry.object_repr }}</strong>{% else %}<a href="{{ entry.get_admin_url }}"><strong>{{ entry.object_repr }}</strong></a>{% endif %}
+              <small>{{ entry.content_type.name|capfirst }} · il y a {{ entry.action_time|timesince }}</small>
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="pf-empty"><i class="fa-regular fa-clock"></i><p>Aucune modification récente.</p></div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

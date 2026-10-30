@@ -1,0 +1,223 @@
+{% load static portfolio_tags %}<!DOCTYPE html>
+<html lang="{{ site.default_language }}" data-theme="{{ site.default_theme }}" data-lang="{{ site.default_language }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ site.site_title|default:profile.full_name }}</title>
+{% if site.meta_description %}<meta name="description" content="{{ site.meta_description }}">{% endif %}
+<meta property="og:title" content="{{ site.site_title|default:profile.full_name }}">
+{% if site.favicon %}<link rel="icon" href="{{ site.favicon.url }}">{% endif %}
+<script>
+  /* Thème, langue et animations appliqués avant l'affichage (évite le flash). */
+  (function () {
+    var d = document.documentElement, theme = null, lang = null;
+    try { theme = localStorage.getItem("pf-theme"); lang = localStorage.getItem("pf-lang"); } catch (e) {}
+    var q = new URLSearchParams(location.search).get("lang");
+    if (q === "fr" || q === "en") lang = q;
+    theme = theme || "{{ site.default_theme }}";
+    if (theme === "system") theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    lang = lang || "{{ site.default_language }}";
+    d.dataset.theme = theme; d.dataset.lang = lang; d.lang = lang;
+    if (!{{ site.enable_animations|yesno:"true,false" }} || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      d.classList.add("no-motion");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="{{ site.google_fonts_url }}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="{% static 'portfolio/css/style.css' %}" rel="stylesheet">
+<style>
+  :root {
+    --accent: {{ site.accent_color }};
+    --accent-2: {{ site.accent_color_2 }};
+    --bg-dark: {{ site.dark_background }};
+    --bg-light: {{ site.light_background }};
+    --font-heading: "{{ site.heading_font }}", system-ui, sans-serif;
+    --font-body: "{{ site.body_font }}", system-ui, sans-serif;
+    --radius: {{ site.border_radius }}px;
+  }
+</style>
+</head>
+<body{% if site.enable_tilt %} class="has-tilt"{% endif %}>
+
+{% if site.enable_preloader %}
+<div class="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <div class="preloader-logo">{{ profile.short_name|default:profile.initials }}</div>
+    <div class="preloader-bar"><span></span></div>
+    <div class="preloader-count">0</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="scroll-progress" aria-hidden="true"></div>
+{% if site.enable_cursor_glow %}<div class="cursor-glow" aria-hidden="true"></div>{% endif %}
+<div class="bg-grid" aria-hidden="true"></div>
+
+<!-- NAVIGATION -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#home" aria-label="{{ profile.full_name }}">
+      <span class="brand-mark">{{ profile.initials }}</span>
+      <span class="brand-name">{{ profile.short_name|default:profile.full_name }}</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Navigation">
+      <span class="nav-indicator" aria-hidden="true"></span>
+      {% for section in sections %}{% if section.show_in_nav %}
+        <a href="#{{ section.key }}" data-nav="{{ section.key }}">{% tr section "nav_label" %}</a>
+      {% endif %}{% endfor %}
+    </nav>
+
+    <div class="nav-actions">
+      {% if site.show_language_toggle %}
+      <button class="lang-toggle" type="button" aria-label="Changer de langue / Switch language">
+        <span data-set="fr">FR</span><span data-set="en">EN</span><i class="lang-pill" aria-hidden="true"></i>
+      </button>
+      {% endif %}
+      {% if site.show_theme_toggle %}
+      <button class="icon-btn theme-toggle" type="button" aria-label="Mode clair / sombre">
+        <i class="fa-solid fa-sun"></i><i class="fa-solid fa-moon"></i>
+      </button>
+      {% endif %}
+      <button class="icon-btn burger" type="button" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" aria-hidden="true">
+  <nav>
+    {% for section in sections %}{% if section.show_in_nav %}
+      <a href="#{{ section.key }}" style="--i:{{ forloop.counter0 }}"><small>0{{ forloop.counter }}</small>{% tr section "nav_label" %}</a>
+    {% endif %}{% endfor %}
+  </nav>
+  <div class="mobile-socials">
+    {% for link in socials %}<a href="{{ link.url }}" target="_blank" rel="noopener" aria-label="{{ link.label }}"><i class="{{ link.icon_class }}"></i></a>{% endfor %}
+  </div>
+</div>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-blob blob-1" aria-hidden="true"></div>
+  <div class="hero-blob blob-2" aria-hidden="true"></div>
+
+  <div class="container hero-grid">
+    <div class="hero-text">
+      <div class="hero-meta intro-step" style="--i:0">
+        {% if profile.role_badge %}<span class="chip chip-accent"><i class="fa-solid fa-code"></i> {% tr profile "role_badge" %}</span>{% endif %}
+        {% if profile.available and profile.availability_text %}
+          <span class="chip"><span class="pulse-dot"></span> {% tr profile "availability_text" %}</span>
+        {% endif %}
+      </div>
+
+      {% if profile.greeting %}
+      <p class="hero-greeting intro-step" style="--i:1">{% tr profile "greeting" %} <strong>{{ profile.full_name }}</strong> <span class="wave">👋</span></p>
+      {% endif %}
+
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner" style="--i:2">{% tr profile "hero_title_line1" %}</span></span>
+        <span class="line"><span class="line-inner gradient-text" style="--i:3">{% tr profile "hero_title_line2" %}</span></span>
+      </h1>
+
+      {% if profile.typed_words %}
+      <p class="hero-typed intro-step" style="--i:4">
+        <span>{% tr profile "typed_prefix" %}</span>
+        <span class="typed" data-words-fr="{{ profile.typed_words }}" data-words-en="{{ profile.typed_words_en|default:profile.typed_words }}"></span><span class="caret" aria-hidden="true"></span>
+      </p>
+      {% endif %}
+
+      <p class="hero-subtitle intro-step" style="--i:5">{% tr profile "hero_subtitle" %}</p>
+
+      <div class="hero-ctas intro-step" style="--i:6">
+        <a class="btn btn-primary magnetic" href="{{ profile.cta_link|default:'#contact' }}">
+          <span>{% tr profile "cta_label" %}</span><i class="fa-solid fa-arrow-right"></i>
+        </a>
+        {% if profile.cta2_label %}
+        <a class="btn btn-ghost magnetic" href="{{ profile.cta2_link|default:'#projects' }}">
+          <span>{% tr profile "cta2_label" %}</span><i class="fa-regular fa-folder-open"></i>
+        </a>
+        {% endif %}
+      </div>
+
+      <div class="hero-socials intro-step" style="--i:7">
+        {% for link in socials %}{% if link.show_in_hero %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener" aria-label="{{ link.label }}" data-tip="{{ link.label }}"><i class="{{ link.icon_class }}"></i></a>
+        {% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="hero-visual intro-step" style="--i:3">
+      <div class="photo-frame" data-parallax>
+        <div class="photo-ring" aria-hidden="true"></div>
+        <div class="photo">
+          {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="{{ profile.full_name }}">
+          {% else %}
+            <div class="photo-placeholder"><span>{{ profile.initials }}</span><i class="fa-solid fa-laptop-code"></i></div>
+          {% endif %}
+        </div>
+        {% for badge in badges %}
+          <div class="tech-badge pos-{{ badge.position }}" style="--c:{{ badge.text_color }}; --f:{{ forloop.counter0 }}" title="{{ badge.label }}">
+            {% if badge.icon_image %}<img src="{{ badge.icon_image.url }}" alt="{{ badge.label }}">
+            {% elif badge.icon_class %}<i class="{{ badge.icon_class }}"></i>
+            {% else %}<span>{{ badge.label|truncatechars:7 }}</span>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <a class="scroll-cue" href="#{{ sections.0.key|default:'contact' }}" aria-label="Scroll">
+    <span class="mouse"><span></span></span><small>{% ui "scroll" %}</small>
+  </a>
+</section>
+
+{% if site.show_marquee and marquee %}
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    {% for _ in "12" %}
+      {% for tech in marquee %}
+        <span class="marquee-item" style="--c:{{ tech.text_color }}">
+          {% if tech.icon_image %}<img src="{{ tech.icon_image.url }}" alt="">{% elif tech.icon_class %}<i class="{{ tech.icon_class }}"></i>{% else %}<i class="fa-solid fa-circle-nodes"></i>{% endif %}
+          {{ tech.label }}
+        </span>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% for section in sections %}
+  {% include "portfolio/sections/"|add:section.key|add:".html" %}
+{% endfor %}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <a class="brand" href="#home"><span class="brand-mark">{{ profile.initials }}</span></a>
+    <p>{% tr profile "footer_text" %} <span class="footer-craft">{% ui "crafted" %} <i class="fa-solid fa-heart beat"></i></span></p>
+    <div class="footer-socials">
+      {% for link in socials %}{% if link.show_in_footer %}
+        <a href="{{ link.url }}" target="_blank" rel="noopener" aria-label="{{ link.label }}"><i class="{{ link.icon_class }}"></i></a>
+      {% endif %}{% endfor %}
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" type="button" aria-label="Haut de page">
+  <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20"/></svg>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<div class="toast" role="status" aria-live="polite"><i class="fa-solid fa-circle-check"></i><span></span></div>
+
+{{ js_ui|json_script:"ui-strings" }}
+<script src="{% static 'portfolio/js/main.js' %}" defer></script>
+</body>
+</html>

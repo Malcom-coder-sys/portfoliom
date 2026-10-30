@@ -1,0 +1,27 @@
+{% load portfolio_tags %}<section class="section experience" id="experience">
+  <div class="container">
+    {% include "portfolio/sections/_heading.html" %}
+    <ol class="timeline">
+      <span class="timeline-line" aria-hidden="true"><span></span></span>
+      {% for item in experiences %}
+      <li class="timeline-item" data-reveal>
+        <span class="timeline-dot"><i class="{{ item.icon }}"></i></span>
+        <div class="card timeline-card">
+          <div class="timeline-meta">
+            <span class="timeline-kind">{% if item.kind == "education" %}<span data-l="fr">Formation</span><span data-l="en">Education</span>{% elif item.kind == "work" %}<span data-l="fr">Expérience</span><span data-l="en">Experience</span>{% endif %}</span>
+            {% if item.period %}<span class="timeline-period"><i class="fa-regular fa-calendar"></i> {% tr item "period" %}</span>{% endif %}
+          </div>
+          <h3>{% tr item "title" %}</h3>
+          {% if item.organization or item.location %}
+          <span class="timeline-org">
+            {% if item.organization %}<i class="fa-solid fa-building-columns"></i> {{ item.organization }}{% endif %}
+            {% if item.location %}<span class="timeline-place"><i class="fa-solid fa-location-dot"></i> {{ item.location }}</span>{% endif %}
+          </span>
+          {% endif %}
+          {% if item.description %}<p>{% tr item "description" lines=True %}</p>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+{% load portfolio_tags %}<section class="section skills" id="skills">
+  <div class="container">
+    {% include "portfolio/sections/_heading.html" %}
+    <div class="skills-grid" data-stagger>
+      {% for skill in skills %}
+      <article class="card skill-card tilt" data-reveal>
+        <div class="skill-top">
+          <span class="icon-tile"><i class="{{ skill.icon_class }}"></i></span>
+          <span class="skill-num">0{{ forloop.counter }}</span>
+        </div>
+        <h3>{% tr skill "title" %}</h3>
+        <p>{% tr skill "description" %}</p>
+        <ul class="tags">
+          {% for tag in skill.tags %}<li>{{ tag }}</li>{% endfor %}
+        </ul>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>

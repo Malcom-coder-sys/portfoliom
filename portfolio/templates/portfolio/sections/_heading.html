@@ -1,0 +1,5 @@
+{% load portfolio_tags %}<div class="section-head{% if align == 'left' %} is-left{% endif %}" data-reveal>
+  {% if section.eyebrow %}<span class="eyebrow"><i class="fa-solid fa-minus"></i> {% tr section "eyebrow" %}</span>{% endif %}
+  <h2>{% tr section "title" %}</h2>
+  {% if section.subtitle %}<p>{% tr section "subtitle" %}</p>{% endif %}
+</div>

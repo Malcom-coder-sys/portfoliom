@@ -1,0 +1,22 @@
+# Environnement Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Données locales (base, sauvegardes, fichiers envoyés depuis l'admin)
+db.sqlite3
+db.sqlite3.*
+*.sqlite3-journal
+media/
+staticfiles/
+
+# Secrets et outils
+.env
+.vercel/
+.idea/
+.vscode/
+.DS_Store
+
+# Export temporaire de la base
+data.json

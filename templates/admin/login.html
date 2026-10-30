@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% if form.errors %}{% translate "Error:" %} {% endif %}Connexion | {{ site_title }}{% endblock %}
+{% block bodyclass %}{{ block.super }} login pf-login-page{% endblock %}
+{% block header %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div class="pf-login">
+  <aside class="pf-login-art" aria-hidden="true">
+    <span class="pf-orb pf-orb-1"></span><span class="pf-orb pf-orb-2"></span>
+    <div class="pf-login-art-inner">
+      <span class="pf-brand-mark pf-brand-mark-lg"><i class="fa-solid fa-code"></i></span>
+      <h2>Ton portfolio,<br><span>sous contrôle.</span></h2>
+      <ul>
+        <li><i class="fa-solid fa-palette"></i> Couleurs, polices et animations</li>
+        <li><i class="fa-solid fa-language"></i> Contenu en français et en anglais</li>
+        <li><i class="fa-solid fa-inbox"></i> Messages de tes visiteurs</li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="pf-login-panel">
+    <div class="pf-login-card">
+      <span class="pf-brand-mark"><i class="fa-solid fa-code"></i></span>
+      <h1>Connexion</h1>
+      <p class="pf-muted">Accède à l'administration de ton portfolio.</p>
+
+      {% if form.errors and not form.non_field_errors %}
+        <p class="errornote"><i class="fa-solid fa-circle-exclamation"></i> Vérifie les champs ci-dessous.</p>
+      {% endif %}
+      {% for error in form.non_field_errors %}
+        <p class="errornote"><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</p>
+      {% endfor %}
+      {% if user.is_authenticated %}
+        <p class="errornote">Tu es connecté en tant que {{ username }}, mais sans accès à cette page. Connecte-toi avec un autre compte ?</p>
+      {% endif %}
+
+      <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <label class="pf-input">
+          <span>{{ form.username.label }}</span>
+          <i class="fa-regular fa-user"></i>
+          {{ form.username }}
+        </label>
+        {{ form.username.errors }}
+        <label class="pf-input">
+          <span>{{ form.password.label }}</span>
+          <i class="fa-solid fa-lock"></i>
+          {{ form.password }}
+          <button type="button" class="pf-reveal" data-reveal-password aria-label="Afficher le mot de passe"><i class="fa-regular fa-eye"></i></button>
+        </label>
+        {{ form.password.errors }}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}<a class="pf-link" href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a>{% endif %}
+        <button class="pf-btn pf-btn-primary pf-btn-block" type="submit">Se connecter <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+
+      {% if site_url %}<a class="pf-back" href="{{ site_url }}"><i class="fa-solid fa-arrow-left"></i> Retour au site</a>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

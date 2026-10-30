@@ -1,0 +1,38 @@
+{% load portfolio_tags %}<section class="section about" id="about">
+  <div class="container about-grid">
+    <div class="about-intro">
+      {% include "portfolio/sections/_heading.html" with align="left" %}
+      {% if profile.intro_quote %}
+      <blockquote class="quote" data-reveal>
+        <i class="fa-solid fa-quote-left"></i>
+        <p>{% tr profile "intro_quote" %}</p>
+      </blockquote>
+      {% endif %}
+      <div class="about-actions" data-reveal>
+        {% if profile.cv_file %}
+          <a class="btn btn-primary magnetic" href="{{ profile.cv_file.url }}" data-href-fr="{{ profile.cv_file.url }}" data-href-en="{% if profile.cv_file_en %}{{ profile.cv_file_en.url }}{% else %}{{ profile.cv_file.url }}{% endif %}" download>
+            <i class="fa-solid fa-file-arrow-down"></i><span>{% ui "download_cv" %}</span>
+          </a>
+        {% endif %}
+        {% if profile.location %}<span class="chip"><i class="fa-solid fa-location-dot"></i> {% tr profile "location" %}</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="about-body">
+      {% if profile.bio_paragraph1 %}<p class="lead" data-reveal>{% tr profile "bio_paragraph1" lines=True %}</p>{% endif %}
+      {% if profile.bio_paragraph2 %}<p data-reveal>{% tr profile "bio_paragraph2" lines=True %}</p>{% endif %}
+
+      {% if stats %}
+      <div class="stats" data-stagger>
+        {% for stat in stats %}
+        <div class="stat card" data-reveal>
+          <i class="{{ stat.icon_class }}"></i>
+          <strong><span data-count="{{ stat.value }}">{{ stat.value }}</span>{{ stat.suffix }}</strong>
+          <span>{% tr stat "label" %}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
